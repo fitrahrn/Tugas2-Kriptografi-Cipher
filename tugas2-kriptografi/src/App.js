@@ -1,11 +1,11 @@
 import React, {useState, Component} from 'react';
 import './App.css';
-import { ecb } from './mode/ecb';
+import { encryptECB,decryptECB } from './mode/ecb';
 function App() {
   
   const [textType,setType] = useState("text"); //input type
   const [inputText,setInput] = useState(""); //input text
-  const [cypherType,setCypher] = useState("vigenereStandard"); //set cypher type
+  const [cypherType,setCypher] = useState("ecb"); //set cypher type
   const [cypherKey,setKey] = useState(""); // cipher key
   const [resultText,setResult] = useState(""); //text after encrypted decrypt
   const [encryptTrue,setEncrypt] = useState(true);
@@ -32,36 +32,57 @@ function App() {
     e.preventDefault()
     const reader = new FileReader()
     reader.onload = async (e) => { 
-      if (cypherType === 'extendedVigenere' || cypherType === 'superEnkripsi') {
-        setInput(new Uint8Array(e.target.result));
-      } else {
-        setInput(e.target.result)
-      }
-      //console.log(text)
-      //alert(text)
+      setInput(new Uint8Array(e.target.result));
     };
-    if (cypherType === 'extendedVigenere' || cypherType === 'superEnkripsi') {
-      reader.readAsArrayBuffer(e.target.files[0]);
-      setFileName(e.target.files[0].name);
-      setIsBinaryFile(true);
-    } else {
-      reader.readAsText(e.target.files[0])
+    reader.readAsArrayBuffer(e.target.files[0]);
+    setFileName(e.target.files[0].name);
+    setIsBinaryFile(true);
+  }
+  const setInputandKey = ()=>{
+    let pad_length=0;
+    
+    let input=inputText;
+    let key =cypherKey;
+    if (input.length % 16 !== 0){
+      pad_length = 16 - input.length % 16
+      for(let i=0;i<pad_length;i++){
+        input = input + '\x00'
+      }
+      
     }
+    console.log(input)
+    input = new Uint8Array(input.split("").map(x => x.charCodeAt()));
+    let pad_key = 0;
+    if(key.length <16){
+      pad_key = 16-key.length;
+      for(let i=0;i<pad_key;i++){
+        key = key + '\x00'
+      }
+    }
+    console.log(key)
+    key = new Uint8Array(key.split("").map(x => x.charCodeAt()));
+    console.log(input)
+    console.log(key)
+    return [input,key]
   }
   const encrypt = ()=>{
-    console.log(cypherType);
-    //to do check if slope or m not an even number or can be divided by 13
+    let values = setInputandKey();
+    let input = values[0]
+    let key = values[1]
     switch (cypherType) {
       case "ecb":
-        return ecb(inputText,cypherKey);
+        return new TextDecoder().decode(encryptECB(input,key));
       default:
         return inputText;
     }
   }
   const decrypt = ()=>{
+    let values = setInputandKey();
+    let input = values[0]
+    let key = values[1]
     switch (cypherType) {
       case "ecb":
-        return ecb(inputText,cypherKey);
+        return decryptECB(input,key);
       default:
         return inputText
     }
