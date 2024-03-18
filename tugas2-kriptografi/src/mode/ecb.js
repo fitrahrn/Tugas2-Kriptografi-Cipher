@@ -3,11 +3,10 @@ import { encrypt,decrypt } from "../cipher/cipher";
 
 const encryptECB =  (inputText,cypherKey) =>{
     const blockSize = 128/8
-    let result = new Uint8Array(0);
-    console.log(inputText.length)
+    let result = '';
     for (let i=0; i<inputText.length;i+=blockSize){
         let block = inputText.slice(i,i+blockSize);
-        result = result + encrypt(block,cypherKey);
+        result += encrypt(block,cypherKey);
     }
     return result;
 
@@ -15,10 +14,11 @@ const encryptECB =  (inputText,cypherKey) =>{
 }
 const decryptECB =  (inputText,cypherKey) =>{
     const blockSize = 128/8
-    let result = new Uint8Array(0);
+    let result = '';
+    console.log(inputText)
     for (let i=0; i<inputText.length;i+=blockSize){
         let block = inputText.slice(i,i+blockSize);
-        result = result + decrypt(block,cypherKey);
+        result += decrypt(block,cypherKey);
     }
     return result;
 

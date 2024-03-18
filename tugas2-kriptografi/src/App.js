@@ -9,7 +9,6 @@ function App() {
   const [cypherKey,setKey] = useState(""); // cipher key
   const [resultText,setResult] = useState(""); //text after encrypted decrypt
   const [encryptTrue,setEncrypt] = useState(true);
-  const [encode64,setBase64] = useState("");
   const [fileName, setFileName] = useState("");
   const [isBinaryFile, setIsBinaryFile] = useState(false);
 
@@ -19,12 +18,10 @@ function App() {
     if (encryptTrue){
       result = encrypt()
       setResult(result);
-      setBase64(btoa(result));
     }
     else {
       result = decrypt();
       setResult(result);
-      setBase64(btoa(result));
     }
     
   }
@@ -37,6 +34,7 @@ function App() {
     reader.readAsArrayBuffer(e.target.files[0]);
     setFileName(e.target.files[0].name);
     setIsBinaryFile(true);
+    
   }
   const setInputandKey = ()=>{
     let pad_length=0;
@@ -45,13 +43,28 @@ function App() {
     let key =cypherKey;
     if (input.length % 16 !== 0){
       pad_length = 16 - input.length % 16
-      for(let i=0;i<pad_length;i++){
-        input = input + '\x00'
+      console.log(pad_length)
+      if(!isBinaryFile){
+        for(let i=0;i<pad_length;i++){
+          input = input + '\x00'
+        }       
       }
-      
+      else {
+        let arrayPad = new Uint8Array(pad_length);
+        for(let i=0;i<pad_length;i++){
+          arrayPad[i] = 0;
+        }
+        var mergedArray = new Uint8Array(input.length + arrayPad.length);
+        mergedArray.set(input);
+        mergedArray.set(arrayPad, input.length);
+        input = mergedArray;
+      }
+      console.log(input.length)
     }
-    console.log(input)
-    input = new Uint8Array(input.split("").map(x => x.charCodeAt()));
+    if(!isBinaryFile){
+      input = new Uint8Array(input.split("").map(x => x.charCodeAt()));
+    }
+      
     let pad_key = 0;
     if(key.length <16){
       pad_key = 16-key.length;
@@ -59,19 +72,26 @@ function App() {
         key = key + '\x00'
       }
     }
-    console.log(key)
     key = new Uint8Array(key.split("").map(x => x.charCodeAt()));
-    console.log(input)
-    console.log(key)
     return [input,key]
   }
   const encrypt = ()=>{
+    
     let values = setInputandKey();
     let input = values[0]
     let key = values[1]
     switch (cypherType) {
       case "ecb":
-        return new TextDecoder().decode(encryptECB(input,key));
+        if(!isBinaryFile){
+          return encryptECB(input,key);
+        }
+        else{
+          let result  = (encryptECB(input,key));
+          result += fileName;
+          result += fileName.length.toString();
+          return result;
+          
+        }
       default:
         return inputText;
     }
@@ -82,7 +102,29 @@ function App() {
     let key = values[1]
     switch (cypherType) {
       case "ecb":
-        return decryptECB(input,key);
+        if(!isBinaryFile){
+          return decryptECB(input,key);
+        }
+        else{
+          if (typeof input !== 'string') {
+            var text = '';
+            for (var i = 0; i < inputText.length; i++) {
+                text += String.fromCharCode(inputText[i]);
+            }
+            console.log(text)
+            input = text;
+          }
+          
+          var lengthInStr = input.match(/\d+$/)[0];
+          var length = parseInt(lengthInStr, 10);
+          var fileName = input.slice(-lengthInStr.length - length, -lengthInStr.length);
+          input = input.slice(0, -lengthInStr.length - length);
+          console.log(input)
+          //input =  new Uint8Array(input.split("").map(x => x.charCodeAt()));
+          setFileName(fileName)
+          return decryptECB(input,key);
+          
+        }
       default:
         return inputText
     }
@@ -138,26 +180,6 @@ function App() {
             const link = document.createElement("a");
             link.href = URL.createObjectURL(file);
             link.download = (isBinaryFile && !encryptTrue) ? fileName : "result.dat";
-            link.click();
-        }}>Download As Binary File</button>
-      </div>
-      <div className="result">
-      <label>Base 64 Result</label>
-        <p value={encode64}>{encode64}</p>
-        <button onClick={() => {
-            const buffer = Uint8Array.from(encode64, c => c.charCodeAt(0));
-            const file = new Blob([buffer], { type:"text/plain"});
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(file);
-            link.download = "result.txt";
-            link.click();
-        }}>Download As Text File</button>
-        <button onClick={() => {
-            const buffer = Uint8Array.from(encode64, c => c.charCodeAt(0));
-            const file = new Blob([buffer], { type:"text/plain"});
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(file);
-            link.download = "result.dat";
             link.click();
         }}>Download As Binary File</button>
       </div>
