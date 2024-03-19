@@ -120,7 +120,7 @@ function App() {
           var fileName = input.slice(-lengthInStr.length - length, -lengthInStr.length);
           input = input.slice(0, -lengthInStr.length - length);
           console.log(input)
-          //input =  new Uint8Array(input.split("").map(x => x.charCodeAt()));
+          input =  new Uint8Array(input.split("").map(x => x.charCodeAt()));
           setFileName(fileName)
           return decryptECB(input,key);
           

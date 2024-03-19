@@ -5,7 +5,11 @@ const encryptECB =  (inputText,cypherKey) =>{
     const blockSize = 128/8
     let result = '';
     for (let i=0; i<inputText.length;i+=blockSize){
-        let block = inputText.slice(i,i+blockSize);
+        let block =new Uint8Array(16) ;
+        for (let j=i;j<i+blockSize;j++){
+            block[j-i] = inputText[j];
+        }
+        
         result += encrypt(block,cypherKey);
     }
     return result;
@@ -15,9 +19,11 @@ const encryptECB =  (inputText,cypherKey) =>{
 const decryptECB =  (inputText,cypherKey) =>{
     const blockSize = 128/8
     let result = '';
-    console.log(inputText)
     for (let i=0; i<inputText.length;i+=blockSize){
-        let block = inputText.slice(i,i+blockSize);
+        let block =new Uint8Array(16) ;
+        for (let j=i;j<i+blockSize;j++){
+            block[j-i] = inputText[j];
+        }
         result += decrypt(block,cypherKey);
     }
     return result;
