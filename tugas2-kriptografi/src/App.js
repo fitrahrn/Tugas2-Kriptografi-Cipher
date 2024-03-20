@@ -1,6 +1,7 @@
 import React, {useState, Component} from 'react';
 import './App.css';
 import { encryptECB,decryptECB } from './mode/ecb';
+import { encryptCBC,decryptCBC } from './mode/cbc';
 function App() {
   
   const [textType,setType] = useState("text"); //input type
@@ -11,7 +12,7 @@ function App() {
   const [encryptTrue,setEncrypt] = useState(true);
   const [fileName, setFileName] = useState("");
   const [isBinaryFile, setIsBinaryFile] = useState(false);
-
+  const [IVKey,setIV] = useState("");
   const getResult = async (event)=>{
     event.preventDefault();
     let result = '';
@@ -38,7 +39,7 @@ function App() {
   }
   const setInputandKey = ()=>{
     let pad_length=0;
-    
+    let iv = IVKey;
     let input=inputText;
     let key =cypherKey;
     if (input.length % 16 !== 0){
@@ -73,24 +74,42 @@ function App() {
       }
     }
     key = new Uint8Array(key.split("").map(x => x.charCodeAt()));
-    return [input,key]
+    let pad_iv = 0;
+    if(iv.length<16){
+      pad_iv = 16-iv.length;
+      for(let i=0;i<pad_iv;i++){
+        iv = iv + '\x00'
+      }
+    }
+    return [input,key,iv]
   }
   const encrypt = ()=>{
     
     let values = setInputandKey();
     let input = values[0]
     let key = values[1]
+    let iv = values[2]
     switch (cypherType) {
       case "ecb":
         if(!isBinaryFile){
           return encryptECB(input,key);
         }
         else{
-          let result  = (encryptECB(input,key));
+          let result  = (encryptECB(input,key,iv));
           result += fileName;
           result += fileName.length.toString();
           return result;
           
+        }
+      case "cbc":
+        if(!isBinaryFile){
+          return encryptCBC(input,key);
+        }
+        else{
+          let result  = (encryptCBC(input,key,iv));
+          result += fileName;
+          result += fileName.length.toString();
+          return result;
         }
       default:
         return inputText;
@@ -158,6 +177,13 @@ function App() {
           <option value="cfb">CFB</option>
           <option value="counter">Counter</option>
         </select>
+        {
+          cypherType!=='ecb'? <div>
+            <label>Input IV: </label>
+            <input type="text" name = 'IV' value={IVKey} onChange={(event)=>setIV(event.target.value)}/>
+          </div>:
+          <div></div>
+        }
         <label>Input Key: </label>
         <input type="text" name = 'cypherKey' value={cypherKey} onChange={(event)=>setKey(event.target.value)}/>
         <button type="submit"onClick={()=>setEncrypt(true)}>Encrypt</button>
