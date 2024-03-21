@@ -1,11 +1,15 @@
 import { generateSubkeys } from "./keyScheduling";
+import { feistelEncrypt, feistelDecrypt } from "./feistel";
 
 const encryptBlock = (input, key) => {
-    var subkeys = generateSubkeys(key);
-    const result = new Uint8Array(16);
-    for (let i = 0; i < 16; i++) {
-        result[i] = input[i] ^ key[i];
-    }
+    let subkeys = generateSubkeys(key);
+    let result = feistelEncrypt(input, subkeys);
+    return result;
+};
+
+const decryptBlock = (input, key) => {
+    let subkeys = generateSubkeys(key);
+    let result = feistelDecrypt(input, subkeys);
     return result;
 };
 

@@ -13,6 +13,22 @@ const feistelEncrypt = (input, subkeys) => {
     return left.concat(right);
 }
 
+const feistelDecrypt = (input, subkeys) => {
+    let left = input.slice(0, 8);
+    let right = input.slice(0, 8);
+    for(let i = 15; i >= 0; i--) {
+        let newRight = left;
+        let newLeft = new Uint8Array(8);
+        let ret = roundFunction(left, subkeys[i]);
+        for(let j = 0; j < 8; j++) {
+            newLeft[j] = right[j] ^ ret[j];
+        } 
+        left = newLeft;
+        right = newRight;
+    }
+    return left.concat(right);
+};
+
 const sBox = [
     [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
     [0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0],
@@ -57,4 +73,4 @@ const roundFunction = (input, subkey) => {
     return newInput;
 }
 
-export {sBox};
+export {sBox, feistelEncrypt, feistelDecrypt };
