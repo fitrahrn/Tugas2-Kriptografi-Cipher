@@ -42,6 +42,7 @@ function App() {
     let iv = IVKey;
     let input=inputText;
     let key =cypherKey;
+    
     if (input.length % 16 !== 0){
       pad_length = 16 - input.length % 16
       console.log(pad_length)
@@ -81,7 +82,9 @@ function App() {
         iv = iv + '\x00'
       }
     }
+    iv = new Uint8Array(iv.split("").map(x => x.charCodeAt()));
     return [input,key,iv]
+    
   }
   const encrypt = ()=>{
     
@@ -95,7 +98,7 @@ function App() {
           return encryptECB(input,key);
         }
         else{
-          let result  = (encryptECB(input,key,iv));
+          let result  = (encryptECB(input,key));
           result += fileName;
           result += fileName.length.toString();
           return result;
@@ -103,7 +106,7 @@ function App() {
         }
       case "cbc":
         if(!isBinaryFile){
-          return encryptCBC(input,key);
+          return encryptCBC(input,key,iv);
         }
         else{
           let result  = (encryptCBC(input,key,iv));
@@ -119,6 +122,7 @@ function App() {
     let values = setInputandKey();
     let input = values[0]
     let key = values[1]
+    let iv=values[2]
     switch (cypherType) {
       case "ecb":
         if(!isBinaryFile){
@@ -144,6 +148,29 @@ function App() {
           return decryptECB(input,key);
           
         }
+    case "cbc":
+      if(!isBinaryFile){
+        return decryptCBC(input,key,iv);
+      }
+      else{
+        if (typeof input !== 'string') {
+          text = '';
+          for (i = 0; i < inputText.length; i++) {
+              text += String.fromCharCode(inputText[i]);
+          }
+          console.log(text)
+          input = text;
+        }
+        
+        lengthInStr = input.match(/\d+$/)[0];
+        length = parseInt(lengthInStr, 10);
+        fileName = input.slice(-lengthInStr.length - length, -lengthInStr.length);
+        input = input.slice(0, -lengthInStr.length - length);
+        input =  new Uint8Array(input.split("").map(x => x.charCodeAt()));
+        setFileName(fileName)
+        return decryptCBC(input,key,iv);
+        
+      }
       default:
         return inputText
     }
