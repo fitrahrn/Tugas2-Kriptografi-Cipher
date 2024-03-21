@@ -56,3 +56,5 @@ const roundFunction = (input, subkey) => {
     }
     return newInput;
 }
+
+export {sBox};
