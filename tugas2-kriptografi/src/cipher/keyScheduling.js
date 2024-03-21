@@ -28,8 +28,8 @@ const generateSubkeys = (key) => {
             }
         }
         keyMatrix = newKeyMatrix;
-        let oddSubkey = new Uint8Array();
-        let evenSubkey = new Uint8Array();
+        let oddSubkey = [];
+        let evenSubkey = [];
         for(let j = 0; j < 4; j++) {
             for(let k = 0; k < 4; k++) {
                 if((j+k)%2) {

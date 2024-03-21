@@ -1,22 +1,33 @@
+import { arrToHexStr } from "../tools/tools";
+
 const feistelEncrypt = (input, subkeys) => {
-    const left = input.slice(0, 8);
-    const right = input.slice(8, 16);
+    let left = input.slice(0, 8);
+    let right = input.slice(8, 16);
+    let leftHex = arrToHexStr(left);
+    let rightHex = arrToHexStr(right);
+    console.log(`before round 1: left = ${leftHex}, right = ${rightHex}`)
     for (let i = 0; i < 16; i++) {
-        const newRight = roundFunction(right, subkeys[i]);
+        console.log(`subkeys[i]: ${arrToHexStr(subkeys[i])}`);
+        let newRight = roundFunction(right, subkeys[i]);
         for(let j=0; j<8;j++) {
             newRight[j] ^= left[j];
         }
-        const newLeft = right;
-        right.set(newRight);
-        left.set(newLeft);
+        let newLeft = right;
+        right = newRight;
+        left = newLeft;
+        console.log(`after round ${i+1}: left = ${arrToHexStr(left)}, right = ${arrToHexStr(right)}`);
     }
+    left = Array.from(left);
+    right = Array.from(right);
     return left.concat(right);
 }
 
 const feistelDecrypt = (input, subkeys) => {
     let left = input.slice(0, 8);
-    let right = input.slice(0, 8);
+    let right = input.slice(8, 16);
+    console.log(`after round 16: left = ${arrToHexStr(left)}, right = ${arrToHexStr(right)}`)
     for(let i = 15; i >= 0; i--) {
+        console.log(`subkeys[i]: ${arrToHexStr(subkeys[i])}`);
         let newRight = left;
         let newLeft = new Uint8Array(8);
         let ret = roundFunction(left, subkeys[i]);
@@ -25,7 +36,10 @@ const feistelDecrypt = (input, subkeys) => {
         } 
         left = newLeft;
         right = newRight;
+        console.log(`before round ${i+1}: left = ${arrToHexStr(left)}, right = ${arrToHexStr(right)}`);
     }
+    left = Array.from(left);
+    right = Array.from(right);
     return left.concat(right);
 };
 
@@ -52,8 +66,9 @@ const pBox = [19, 11, 6, 15, 20, 40, 59, 29, 49, 56, 37, 26, 63, 62, 60, 21, 38,
 
 const roundFunction = (input, subkey) => {
     // s-box
+    let subsResult = new Uint8Array(8);
     for(let i = 0; i < 8; i++) {
-        input[i] = sBox[input[i] >> 4][input[i]%16];
+        subsResult[i] = sBox[input[i] >> 4][input[i]%16];
     }
     // p-box
     const newInput = new Uint8Array(8);
@@ -62,7 +77,7 @@ const roundFunction = (input, subkey) => {
         for(let j = 0; j < 8; j++) {
             let idx = pBox[i*8+j]>>3;
             let bit = pBox[i*8+j]%8;
-            let cur = (input[idx] >> bit) & 1;
+            let cur = (subsResult[idx] >> bit) & 1;
             newInput[i] |= cur << j;
         }
     }

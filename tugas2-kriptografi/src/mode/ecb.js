@@ -1,5 +1,5 @@
-import { encrypt,decrypt } from "../cipher/cipher";
-
+import { encrypt,decrypt, encryptBlock, decryptBlock } from "../cipher/cipher";
+import { byteToStr } from "../tools/tools";
 
 const encryptECB =  (inputText,cypherKey) =>{
     const blockSize = 128/8
@@ -10,7 +10,8 @@ const encryptECB =  (inputText,cypherKey) =>{
             block[j-i] = inputText[j];
         }
         
-        result += encrypt(block,cypherKey);
+        // result += encrypt(block,cypherKey);
+        result += byteToStr(encryptBlock(block,cypherKey));
     }
     return result;
 
@@ -24,7 +25,8 @@ const decryptECB =  (inputText,cypherKey) =>{
         for (let j=i;j<i+blockSize;j++){
             block[j-i] = inputText[j];
         }
-        result += decrypt(block,cypherKey);
+        // result += decrypt(block,cypherKey);
+        result += byteToStr(decryptBlock(block,cypherKey));
     }
     return result;
 

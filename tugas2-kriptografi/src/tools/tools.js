@@ -10,4 +10,23 @@ const xorBlocks = (block1, block2) => {
     return result;
 };
 
-export {xorBlocks};
+const byteToStr = (block) => {
+    let result = '';
+    for (let i = 0; i < block.length; i++) {
+        result += String.fromCharCode(block[i]);
+    }
+    return result;
+};
+
+const arrToHexStr= (arr) => {
+    let res = "";
+    for (let i = 0; i < arr.length; i++) {
+        if(arr[i]<16) {
+            res += "0";
+        }
+        res += arr[i].toString(16);
+    }
+    return res;
+};
+
+export {xorBlocks, byteToStr, arrToHexStr };

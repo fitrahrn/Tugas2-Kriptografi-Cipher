@@ -31,4 +31,4 @@ const decrypt =  (inputText,cypherKey) =>{
 
 }
 
-export {encrypt,decrypt};
+export {encrypt,decrypt, encryptBlock, decryptBlock };
