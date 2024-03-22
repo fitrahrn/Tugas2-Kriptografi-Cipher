@@ -2,6 +2,13 @@ import { encryptFn } from "./cfb";
 
 const encryptOFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
     let ciphertext = "";
+    if (typeof plaintext === 'object') {
+        let text = "";
+        for (let i = 0; i < plaintext.length; i++) {
+            text += String.fromCharCode(plaintext[i]);
+        }
+        plaintext = text;
+    }
 
     let nChar = blockSize/8;
     iv = iv.substr(0, nChar).padEnd(nChar, String.fromCharCode(0));

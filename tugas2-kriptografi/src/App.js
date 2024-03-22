@@ -118,12 +118,27 @@ function App() {
           result += fileName.length.toString();
           return result;
         }
-      case "cfb":
-        return encryptCFB(inputText, IVKey, cypherKey);
-      case "ofb":
-        return encryptOFB(inputText, IVKey, cypherKey);
-      case "counter":
-        return encryptCounter(inputText, cypherKey);
+      case "cfb": {
+        let result = encryptCFB(inputText, IVKey, cypherKey);
+        if (isBinaryFile) {
+          result += fileName + fileName.length.toString();
+        }
+        return result;
+      }
+      case "ofb": {
+        let result = encryptOFB(inputText, IVKey, cypherKey);
+        if (isBinaryFile) {
+          result += fileName + fileName.length.toString();
+        }
+        return result;
+      }
+      case "counter": {
+        let result = encryptCounter(inputText, cypherKey);
+        if (isBinaryFile) {
+          result += fileName + fileName.length.toString();
+        }
+        return result;
+      }
       default:
         return inputText;
     }
@@ -182,11 +197,53 @@ function App() {
         
       }
       case "cfb":
-        return decryptCFB(inputText, IVKey, cypherKey);
+        if (!isBinaryFile) {
+          return decryptCFB(inputText, IVKey, cypherKey);
+        }
+
+        text = '';
+        for (i = 0; i < inputText.length; i++) {
+            text += String.fromCharCode(inputText[i]);
+        }
+        input = text;
+        lengthInStr = input.match(/\d+$/)[0];
+        length = parseInt(lengthInStr, 10);
+        fileName = input.slice(-lengthInStr.length - length, -lengthInStr.length);
+        input = input.slice(0, -lengthInStr.length - length);
+        setFileName(fileName);
+        return decryptCFB(input, IVKey, cypherKey);
       case "ofb":
-        return decryptOFB(inputText, IVKey, cypherKey);
+        if (!isBinaryFile) {
+          return decryptOFB(inputText, IVKey, cypherKey);
+        }
+
+        text = '';
+        for (i = 0; i < inputText.length; i++) {
+            text += String.fromCharCode(inputText[i]);
+        }
+        input = text;
+        lengthInStr = input.match(/\d+$/)[0];
+        length = parseInt(lengthInStr, 10);
+        fileName = input.slice(-lengthInStr.length - length, -lengthInStr.length);
+        input = input.slice(0, -lengthInStr.length - length);
+        setFileName(fileName);
+        return decryptOFB(input, IVKey, cypherKey);
       case "counter":
-        return decryptCounter(inputText, cypherKey);
+        if (!isBinaryFile) {
+          return decryptCounter(inputText, cypherKey);
+        }
+
+        text = '';
+        for (i = 0; i < inputText.length; i++) {
+            text += String.fromCharCode(inputText[i]);
+        }
+        input = text;
+        lengthInStr = input.match(/\d+$/)[0];
+        length = parseInt(lengthInStr, 10);
+        fileName = input.slice(-lengthInStr.length - length, -lengthInStr.length);
+        input = input.slice(0, -lengthInStr.length - length);
+        setFileName(fileName);
+        return decryptCounter(input, cypherKey);
       default:
         return inputText
     }
@@ -196,7 +253,10 @@ function App() {
     <div className="App">
       <form onSubmit={getResult}>
         <label>Input Type: </label>
-        <select onChange={(event) =>setType(event.target.value)}>
+        <select onChange={(event) =>{
+          setType(event.target.value);
+          setIsBinaryFile(textType === "text");
+        }}>
           <option value="text">Text</option>
           <option value="file">File</option>
         </select>

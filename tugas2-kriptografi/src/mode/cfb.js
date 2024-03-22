@@ -8,6 +8,13 @@ const encryptFn = (iv, k, nChar, l = 1) => {
 
 const encryptCFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
     let ciphertext = "";
+    if (typeof plaintext === 'object') {
+        let text = "";
+        for (let i = 0; i < plaintext.length; i++) {
+            text += String.fromCharCode(plaintext[i]);
+        }
+        plaintext = text;
+    }
 
     let nChar = blockSize/8;
     iv = iv.substr(0, nChar).padEnd(nChar, String.fromCharCode(0));
@@ -31,6 +38,13 @@ const encryptCFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
 
 const decryptCFB = (ciphertext, iv, key, blockSize = 64, r = 8) => {
     let plaintext = "";
+    if (typeof ciphertext === 'object') {
+        let text = "";
+        for (let i = 0; i < ciphertext.length; i++) {
+            text += String.fromCharCode(ciphertext[i]);
+        }
+        ciphertext = text;
+    }
 
     let nChar = blockSize/8;
     iv = iv.substr(0, nChar).padEnd(nChar, String.fromCharCode(0));
