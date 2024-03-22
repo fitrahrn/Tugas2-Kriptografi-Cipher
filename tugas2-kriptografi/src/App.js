@@ -4,6 +4,8 @@ import { encryptECB,decryptECB } from './mode/ecb';
 import { encryptCBC,decryptCBC } from './mode/cbc';
 import { encryptCFB, decryptCFB } from './mode/cfb';
 import { encryptOFB, decryptOFB } from './mode/ofb';
+import { encryptCounter, decryptCounter } from './mode/counter';
+
 function App() {
   
   const [textType,setType] = useState("text"); //input type
@@ -120,6 +122,8 @@ function App() {
         return encryptCFB(inputText, IVKey, cypherKey);
       case "ofb":
         return encryptOFB(inputText, IVKey, cypherKey);
+      case "counter":
+        return encryptCounter(inputText, cypherKey);
       default:
         return inputText;
     }
@@ -181,6 +185,8 @@ function App() {
         return decryptCFB(inputText, IVKey, cypherKey);
       case "ofb":
         return decryptOFB(inputText, IVKey, cypherKey);
+      case "counter":
+        return decryptCounter(inputText, cypherKey);
       default:
         return inputText
     }
