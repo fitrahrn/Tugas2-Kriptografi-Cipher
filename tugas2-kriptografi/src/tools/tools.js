@@ -29,4 +29,12 @@ const arrToHexStr= (arr) => {
     return res;
 };
 
-export {xorBlocks, byteToStr, arrToHexStr };
+const differentBit = (arr1, arr2) => {
+    let res = 0;
+    for (let i = 0; i < arr1.length; i++) {
+        res += (arr1[i] ^ arr2[i]).toString(2).split("1").length - 1;
+    }
+    return res;
+};
+
+export {xorBlocks, byteToStr, arrToHexStr, differentBit };

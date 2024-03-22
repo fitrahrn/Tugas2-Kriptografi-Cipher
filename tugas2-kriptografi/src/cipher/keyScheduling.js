@@ -1,4 +1,5 @@
 import { sBox } from "./feistel";
+import { arrToHexStr } from "../tools/tools";
 
 const generateSubkeys = (key) => {
     const subkeys = [];
@@ -39,6 +40,8 @@ const generateSubkeys = (key) => {
                 }
             }
         }
+        // console.log(`Subkey ${i*2+1}: ${arrToHexStr(oddSubkey)}`);
+        // console.log(`Subkey ${i*2+2}: ${arrToHexStr(evenSubkey)}`);
         subkeys.push(oddSubkey);
         subkeys.push(evenSubkey);
     }
