@@ -2,6 +2,7 @@ import React, {useState, Component} from 'react';
 import './App.css';
 import { encryptECB,decryptECB } from './mode/ecb';
 import { encryptCBC,decryptCBC } from './mode/cbc';
+import { encryptCFB, decryptCFB } from './mode/cfb';
 function App() {
   
   const [textType,setType] = useState("text"); //input type
@@ -45,7 +46,7 @@ function App() {
     
     if (input.length % 16 !== 0){
       pad_length = 16 - input.length % 16
-      console.log(pad_length)
+      // console.log(pad_length)
       if(!isBinaryFile){
         for(let i=0;i<pad_length;i++){
           input = input + '\x00'
@@ -61,7 +62,7 @@ function App() {
         mergedArray.set(arrayPad, input.length);
         input = mergedArray;
       }
-      console.log(input.length)
+      // console.log(input.length)
     }
     if(!isBinaryFile){
       input = new Uint8Array(input.split("").map(x => x.charCodeAt()));
@@ -114,6 +115,8 @@ function App() {
           result += fileName.length.toString();
           return result;
         }
+      case "cfb":
+        return encryptCFB(inputText, IVKey, cypherKey);
       default:
         return inputText;
     }
@@ -171,6 +174,8 @@ function App() {
         return decryptCBC(input,key,iv);
         
       }
+      case "cfb":
+        return decryptCFB(inputText, IVKey, cypherKey);
       default:
         return inputText
     }
