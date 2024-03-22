@@ -3,6 +3,7 @@ import './App.css';
 import { encryptECB,decryptECB } from './mode/ecb';
 import { encryptCBC,decryptCBC } from './mode/cbc';
 import { encryptCFB, decryptCFB } from './mode/cfb';
+import { encryptOFB, decryptOFB } from './mode/ofb';
 function App() {
   
   const [textType,setType] = useState("text"); //input type
@@ -117,6 +118,8 @@ function App() {
         }
       case "cfb":
         return encryptCFB(inputText, IVKey, cypherKey);
+      case "ofb":
+        return encryptOFB(inputText, IVKey, cypherKey);
       default:
         return inputText;
     }
@@ -176,6 +179,8 @@ function App() {
       }
       case "cfb":
         return decryptCFB(inputText, IVKey, cypherKey);
+      case "ofb":
+        return decryptOFB(inputText, IVKey, cypherKey);
       default:
         return inputText
     }

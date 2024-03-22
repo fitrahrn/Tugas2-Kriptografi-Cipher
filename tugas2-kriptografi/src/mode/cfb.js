@@ -51,4 +51,4 @@ const decryptCFB = (ciphertext, iv, key, blockSize = 64, r = 8) => {
     return plaintext;
 }
 
-export {encryptCFB, decryptCFB};
+export {encryptCFB, decryptCFB, encryptFn};
