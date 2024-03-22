@@ -281,7 +281,7 @@ function App() {
           <option value="counter">Counter</option>
         </select>
         {
-          cypherType!=='ecb'? <div>
+          cypherType!=='ecb' && cypherType!=='counter'? <div>
             <label>Input IV: </label>
             <input type="text" name = 'IV' value={IVKey} onChange={(event)=>setIV(event.target.value)}/>
           </div>:
