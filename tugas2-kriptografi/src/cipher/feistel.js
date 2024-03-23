@@ -6,10 +6,11 @@ const feistelEncrypt = (input, subkeys) => {
     let right = input.slice(8, 16);
     let leftHex = arrToHexStr(left);
     let rightHex = arrToHexStr(right);
-    // console.log(`before round 1: left = ${leftHex}, right = ${rightHex}`);
+    // console.log(`[initial] before round 1: left = ${leftHex}, right = ${rightHex}`);
     // let leftAvalanche = left.slice(0, 8);
     // let rightAvalanche = right.slice(0, 8);
-    // leftAvalanche[3] = leftAvalanche[3] ^ 0x01;
+    // leftAvalanche[0] = leftAvalanche[0] ^ 0x01;
+    // console.log(`[changed] before round 1: left = ${arrToHexStr(leftAvalanche)}, right = ${arrToHexStr(rightAvalanche)}`);
     // console.log(`different bit: ${differentBit(left, leftAvalanche) + differentBit(right, rightAvalanche)}`);
     for (let i = 0; i < 16; i++) {
         // console.log(`subkeys[i]: ${arrToHexStr(subkeys[i])}`);
@@ -27,7 +28,8 @@ const feistelEncrypt = (input, subkeys) => {
         // let newLeftAvalanche = rightAvalanche;
         // rightAvalanche = newRightAvalanche;
         // leftAvalanche = newLeftAvalanche;
-        // console.log(`after round ${i+1}: left = ${arrToHexStr(left)}, right = ${arrToHexStr(right)}`);
+        // console.log(`[initial] after round ${i+1}: left = ${arrToHexStr(left)}, right = ${arrToHexStr(right)}`);
+        // console.log(`[changed] after round ${i+1}: left = ${arrToHexStr(leftAvalanche)}, right = ${arrToHexStr(rightAvalanche)}`);
         // console.log(`different bit: left = ${differentBit(left,leftAvalanche)}, right= ${differentBit(right,rightAvalanche)}, total = ${differentBit(left, leftAvalanche) + differentBit(right, rightAvalanche)}`);
     }
     left = Array.from(left);
