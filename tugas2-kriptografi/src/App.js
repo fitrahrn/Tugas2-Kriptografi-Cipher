@@ -17,9 +17,11 @@ function App() {
   const [fileName, setFileName] = useState("");
   const [isBinaryFile, setIsBinaryFile] = useState(false);
   const [IVKey,setIV] = useState("");
+  const [time,setTime] = useState(0);
   const getResult = async (event)=>{
     event.preventDefault();
     let result = '';
+    let start = Date.now();
     if (encryptTrue){
       result = encrypt()
       setResult(result);
@@ -28,6 +30,8 @@ function App() {
       result = decrypt();
       setResult(result);
     }
+    let end = Date.now();
+    setTime(end-start);
     
   }
   const showFile = async (e) => {
@@ -293,8 +297,8 @@ function App() {
         <button type="submit" onClick={()=>setEncrypt(false)}>Decrypt</button>
       </form>
       <div className="result">
-      <label>Result Text</label>
-        <p value={resultText}>{resultText}</p>
+        <label>Result Text</label>
+        <p className="textResult" value={resultText}>{resultText}</p>
         <button onClick={() => {
             const buffer = Uint8Array.from(resultText, c => c.charCodeAt(0));
             const file = new Blob([buffer], { type:"text/plain"});
@@ -311,7 +315,13 @@ function App() {
             link.download = (isBinaryFile && !encryptTrue) ? fileName : "result.dat";
             link.click();
         }}>Download As Binary File</button>
+        
       </div>
+      <div className='result'>
+        <label>Time Elapsed</label>
+        <p value={time}>{time} ms</p>
+      </div>
+      
     </div>
   );
 }

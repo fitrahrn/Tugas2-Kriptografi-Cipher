@@ -1,0 +1,3 @@
+Mode CBC
+IV: washingtongeorge
+KEY: barcelonaspaineu
