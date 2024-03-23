@@ -1,4 +1,4 @@
-import { encrypt,decrypt, encryptBlock, decryptBlock } from "../cipher/cipher";
+import {encryptBlock, decryptBlock } from "../cipher/cipher";
 import { byteToStr } from "../tools/tools";
 
 const encryptECB =  (inputText,cypherKey) =>{

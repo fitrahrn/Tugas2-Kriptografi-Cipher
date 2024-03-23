@@ -1,5 +1,6 @@
-import { encrypt,decrypt } from "../cipher/cipher";
-import { xorBlocks } from "../tools/tools";
+import { encryptBlock, decryptBlock } from "../cipher/cipher";
+import { xorBlocks,byteToStr } from "../tools/tools";
+
 
 const encryptCBC =  (inputText,cypherKey,iv) =>{
     const blockSize = 128/8
@@ -13,7 +14,7 @@ const encryptCBC =  (inputText,cypherKey,iv) =>{
         
         let result_block = xorBlocks(block,cur_xor);
         console.log(result_block)
-        cur_xor = encrypt(result_block,cypherKey)
+        cur_xor = byteToStr(encryptBlock(result_block,cypherKey))
         console.log(cur_xor)
         result += cur_xor;
         cur_xor = new Uint8Array(cur_xor.split("").map(x => x.charCodeAt()));
@@ -33,7 +34,7 @@ const decryptCBC =  (inputText,cypherKey,iv) =>{
             block[j-i] = inputText[j];
         }
         console.log(block)
-        let decrypt_block = decrypt(block,cypherKey);
+        let decrypt_block = byteToStr(decryptBlock(block,cypherKey));
         console.log(decrypt_block)
         decrypt_block = new Uint8Array(decrypt_block.split("").map(x => x.charCodeAt()));
         let result_block=xorBlocks(decrypt_block,cur_xor);
