@@ -163,7 +163,7 @@ function App() {
             for (var i = 0; i < inputText.length; i++) {
                 text += String.fromCharCode(inputText[i]);
             }
-            console.log(text)
+            // console.log(text)
             input = text;
           }
           
@@ -171,7 +171,7 @@ function App() {
           var length = parseInt(lengthInStr, 10);
           var fileName = input.slice(-lengthInStr.length - length, -lengthInStr.length);
           input = input.slice(0, -lengthInStr.length - length);
-          console.log(input)
+          // console.log(input)
           input =  new Uint8Array(input.split("").map(x => x.charCodeAt()));
           setFileName(fileName)
           return decryptECB(input,key);
@@ -187,7 +187,7 @@ function App() {
           for (i = 0; i < inputText.length; i++) {
               text += String.fromCharCode(inputText[i]);
           }
-          console.log(text)
+          // console.log(text)
           input = text;
         }
         
