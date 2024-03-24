@@ -1,4 +1,5 @@
-import { encryptFn } from "./cfb";
+import { blockFn } from "./cfb";
+import {encryptBlock } from "../cipher/cipher";
 
 const encryptCounter = (plaintext, key, blockSize = 64) => {
     let counter = String.fromCharCode(0);
@@ -15,7 +16,7 @@ const encryptCounter = (plaintext, key, blockSize = 64) => {
 
     let ciphertext = "";
     for (let i = 0; i < plaintext.length; i++) {
-        let encryptRes = encryptFn(counter, key, nChar);
+        let encryptRes = blockFn(counter, key, encryptBlock);
         ciphertext += String.fromCharCode(encryptRes.charCodeAt(0) ^ plaintext.charCodeAt(i));
         counter = String.fromCharCode(counter.charCodeAt(0) + 1);
     }

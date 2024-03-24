@@ -1,4 +1,5 @@
-import { encryptFn } from "./cfb";
+import { blockFn } from "./cfb";
+import {encryptBlock } from "../cipher/cipher";
 
 const encryptOFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
     let ciphertext = "";
@@ -15,7 +16,7 @@ const encryptOFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
     key = key.substr(0, nChar).padEnd(nChar, String.fromCharCode(0));
 
     for (let i = 0; i < plaintext.length; i += r/8) {
-        let encryptRes = encryptFn(iv, key, nChar);
+        let encryptRes = blockFn(iv, key, encryptBlock);
         let msb = encryptRes.substring(0, r/8);
 
         let c = "";

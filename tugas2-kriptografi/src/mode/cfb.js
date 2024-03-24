@@ -1,12 +1,12 @@
-const encryptFn = (iv, k, nChar, l = 1) => {
-    let result = "";
-    for (let i = 0; i < nChar; i++) {
-        result += String.fromCharCode(((iv.charCodeAt(i) ^ k.charCodeAt(i)) << l) & (2 ** nChar - 1));
-    }
-    return result;
+import {encryptBlock } from "../cipher/cipher";
+
+const blockFn = (iv, k, fn) => {
+    iv = new Uint8Array(iv.split("").map(x => x.charCodeAt(0)));
+    k = new Uint8Array(k.split("").map(x => x.charCodeAt(0)));
+    return fn(iv, k).map(x => String.fromCharCode(x)).join("");
 }
 
-const encryptCFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
+const encryptCFB = (plaintext, iv, key, blockSize = 128, r = 8) => {
     let ciphertext = "";
     if (typeof plaintext === 'object') {
         let text = "";
@@ -21,7 +21,7 @@ const encryptCFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
     key = key.substr(0, nChar).padEnd(nChar, String.fromCharCode(0));
 
     for (let i = 0; i < plaintext.length; i += r/8) {
-        let encryptRes = encryptFn(iv, key, nChar);
+        let encryptRes = blockFn(iv, key, encryptBlock);
         let msb = encryptRes.substring(0, r/8);
 
         let c = "";
@@ -36,7 +36,7 @@ const encryptCFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
 
 }
 
-const decryptCFB = (ciphertext, iv, key, blockSize = 64, r = 8) => {
+const decryptCFB = (ciphertext, iv, key, blockSize = 128, r = 8) => {
     let plaintext = "";
     if (typeof ciphertext === 'object') {
         let text = "";
@@ -51,7 +51,7 @@ const decryptCFB = (ciphertext, iv, key, blockSize = 64, r = 8) => {
     key = key.substr(0, nChar).padEnd(nChar, String.fromCharCode(0));
 
     for (let i = 0; i < ciphertext.length; i += r/8) {
-        let encryptRes = encryptFn(iv, key, nChar);
+        let encryptRes = blockFn(iv, key, encryptBlock);
         let msb = encryptRes.substring(0, r/8);
 
         let p = "";
@@ -65,4 +65,4 @@ const decryptCFB = (ciphertext, iv, key, blockSize = 64, r = 8) => {
     return plaintext;
 }
 
-export {encryptCFB, decryptCFB, encryptFn};
+export {encryptCFB, decryptCFB, blockFn};
