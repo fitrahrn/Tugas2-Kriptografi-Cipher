@@ -1,7 +1,7 @@
 import { blockFn } from "./cfb";
 import {encryptBlock } from "../cipher/cipher";
 
-const encryptOFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
+const encryptOFB = (plaintext, iv, key, blockSize = 128, r = 8) => {
     let ciphertext = "";
     if (typeof plaintext === 'object') {
         let text = "";
@@ -30,7 +30,7 @@ const encryptOFB = (plaintext, iv, key, blockSize = 64, r = 8) => {
     return ciphertext;
 }
 
-const decryptOFB = (ciphertext, iv, key, blockSize = 64, r = 8) => {
+const decryptOFB = (ciphertext, iv, key, blockSize = 128, r = 8) => {
     return encryptOFB(ciphertext, iv, key, blockSize, r);
 }
 

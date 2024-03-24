@@ -1,7 +1,7 @@
 import { blockFn } from "./cfb";
 import {encryptBlock } from "../cipher/cipher";
 
-const encryptCounter = (plaintext, key, blockSize = 64) => {
+const encryptCounter = (plaintext, key, blockSize = 128) => {
     let counter = String.fromCharCode(0);
     if (typeof plaintext === 'object') {
         let text = "";
